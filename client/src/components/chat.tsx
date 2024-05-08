@@ -1,4 +1,4 @@
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import { useState } from "react";
 
 const GET_MESSAGES = gql`
@@ -8,6 +8,12 @@ const GET_MESSAGES = gql`
       user
       content
     }
+  }
+`;
+
+const POST_MESSAGE = gql`
+  mutation ($user: String!, $content: String!) {
+    postMessage(user: $user, content: $content)
   }
 `;
 
@@ -25,17 +31,37 @@ export const Chat = () => {
     content: "",
   });
 
+  const [postMessage] = useMutation(POST_MESSAGE);
+
+  const handleSendMessage = () => {
+    if (messageState.content.length > 0) {
+      postMessage({ variables: messageState });
+    }
+    setMessageState({ ...messageState, content: "" });
+  };
+
   return (
-    <section>
-      <h1>I'm a Chat window</h1>
-      <input
-        className="chatbox__user-form"
-        name="user"
-        value={messageState.user}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setMessageState({ ...messageState, user: e.target.value })
-        }
-      />
+    <section className="flex flex-col items-center">
+      <h1 className="text-4xl mb-6">I'm a Chat window</h1>
+      <div className="flex w-9/12 justify-center">
+        <input
+          className="rounded p-3 me-4 w-2/12 text-black"
+          name="user"
+          value={messageState.user}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setMessageState({ ...messageState, user: e.target.value })
+          }
+        />
+        <input
+          className="rounded p-3 w-8/12 min-w-60 text-black"
+          name="user"
+          value={messageState.content}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setMessageState({ ...messageState, content: e.target.value })
+          }
+          onKeyUp={(e) => e.key === "Enter" && handleSendMessage()}
+        />
+      </div>
       <Messages currentUser={messageState.user} />
     </section>
   );

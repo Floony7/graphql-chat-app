@@ -3,11 +3,9 @@ import { Chat } from "./components/chat";
 
 function App() {
   return (
-    <>
-      <div className="chatbox__container">
-        <Chat />
-      </div>
-    </>
+    <div className="bg-slate-300 p-6 rounded-xl">
+      <Chat />
+    </div>
   );
 }
 
